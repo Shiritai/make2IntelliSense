@@ -34,6 +34,31 @@ Done :), you'll see your customized `c_cpp_properties.json` and `settings.json` 
 
 ## Trouble shooting
 
+### About file exclusion and `.gitignore`
+
+If you don't have `.gitignore` file, you can also run the script to generate `settings.json`. There are two options about file exclusion, `COPY_GIT_IGNORE` and `USE_GIT_IGNORE`. The following table shows their difference.
+
+|option|method|default|
+|:-:|:-:|:-:|
+|`COPY_GIT_IGNORE`|Set excluding files by copy ignored filenames according to `.gitignore` (it's ok if `.gitignore not exist`) with default ignorant and specified-file bypassing|V|
+|`USE_GIT_IGNORE`|Set excluding files by VSCode `explorer.excludeGitIgnore` option||
+
+For example, if you want to exclude files following `.gitignore`, you can
+
+```bash
+make OPT=USE_GIT_IGNORE
+```
+
+such as
+
+```bash
+make TAR_DIR=~/repos/linux OPT=USE_GIT_IGNORE
+```
+
+Notice that in this case, the result will accidentally be the same since linux ignores all `.*` files and I haven't figure out a better way to bypass some `.*` files. If you have any idea, please contact my :)
+
+### Make dependency issue
+
 If you encounter some dependency issue, that is, if make command invoked by `gen_c_cpp_properties.py` stuck because lost of previous object files, then you can edit `MODE` variable in Makefile to use real make process for `c_cpp_properties.json` generation.
 
 To enable real make process, set `MODE` to empty space like:
