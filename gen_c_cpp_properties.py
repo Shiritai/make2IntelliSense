@@ -27,8 +27,9 @@ kernel_ver = stream.read().strip()
 def process_command(line: str):
     for i in line.split():
         if i[:2] == "-I":
-            p = i[2:].replace("./", "")
-            includePath.add(f"/usr/src/linux-headers-{kernel_ver}/{p}")
+            p = f'/usr/src/linux-headers-{kernel_ver}/{i[2:].replace("./", "")}'
+            if os.path.exists(p):
+                includePath.add(p)
         elif i[:2] == "-D":
             if "=" in i[2:]: # has define value
                 k, v = i[2:].split("=")
