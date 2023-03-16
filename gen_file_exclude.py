@@ -19,8 +19,15 @@ if len(sys.argv) >= 4:
 # working directory
 work_dir = "./" if len(sys.argv) < 2 else sys.argv[1]
 work_dir += '/' if work_dir[-1] != '/' else ''
+tar_dir = f'{work_dir}.vscode'
+tar_file = f'{tar_dir}/settings.json'
 
-json_str: str = ''
+os.makedirs(tar_dir, exist_ok=True)
+
+json_dict: dict = {}
+if os.path.isfile(tar_file):
+    with open(tar_file, 'r') as f:
+        json_dict = json.load(f)
 
 if method == methods["copy"]:
     exclude = { # these are default setting
@@ -52,13 +59,12 @@ if method == methods["copy"]:
                         # Notice that they still have chance disappear
                         # since you may have ".*" ignored
                         exclude.add("**/" + l)
-    json_str = json.dumps({"files.exclude": {
-        key: True for key in sorted(exclude)}}, indent=4)
+    json_dict.update({"files.exclude": {
+        key: True for key in sorted(exclude)}})
 elif method == methods["follow"]:
-    json_str = json.dumps({"explorer.excludeGitIgnore": True}, indent=4)
+    json_dict.update({"explorer.excludeGitIgnore": True})
 else:
     pass # currently not supported option
 
-os.makedirs(f"{work_dir}.vscode", exist_ok=True)
-with open(f"{work_dir}.vscode/settings.json", "w") as settings:
-    settings.write(json_str)
+with open(tar_file, "w") as settings:
+    settings.write(json.dumps(json_dict, indent=4))

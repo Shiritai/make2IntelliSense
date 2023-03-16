@@ -43,6 +43,16 @@ def process_command(line: str):
 # working directory
 work_dir = "./" if len(sys.argv) < 2 else sys.argv[1]
 work_dir += '/' if work_dir[-1] != '/' else ''
+tar_dir = f'{work_dir}.vscode'
+tar_file = f'{tar_dir}/c_cpp_properties.json'
+
+os.makedirs(tar_dir, exist_ok=True)
+
+json_dict: dict = {}
+if os.path.isfile(tar_file):
+    with open(tar_file, 'r') as f:
+        json_dict = json.load(f)
+
 # run make to find #defines and -I includes
 stream = os.popen(f'cd {work_dir} && make {"" if len(sys.argv) < 3 else sys.argv[2]}')
 # stream = os.popen('make --dry-run')
@@ -55,7 +65,7 @@ for i in lines:
         process_command(i)
 
 # Create the JSON 
-config = {
+configs = {
     "name": "Linux",
     "includePath": sorted(list(includePath)),
     "defines": sorted((*defines["declare"], # key (only)
@@ -67,14 +77,13 @@ config = {
     "cppStandard": "c++17",
 }
 
-json_dict = {
-    "configurations": [config, ],
+json_dict.update({
+    "configurations": [configs, ],
     "version": 4
-}
+})
 
 # Convert the Dictionary to a string of JSON
 json_str = json.dumps(json_dict, indent=4)
 # Save the JSON to the files
-os.makedirs(f"{work_dir}.vscode", exist_ok=True)
-with open(f"{work_dir}.vscode/c_cpp_properties.json", "w") as properties:
+with open(tar_file, "w") as properties:
     properties.write(json_str)
