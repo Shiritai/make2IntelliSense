@@ -97,7 +97,7 @@ for i in lines:
 # -------------------
 # handle exception
 for k, v in std.items():
-    if len(std["c"]) > 1:
+    if len(std[k]) > 1:
         print(f"detect multiple {k} standards: {', '.join(v)}")
 # -------------------
 

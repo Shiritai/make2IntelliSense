@@ -33,7 +33,7 @@ if method == methods["copy"]:
     exclude = { # these are default setting
         "**/.git", "**/.svn",
         "**/.hg", "**/CVS",
-        "**/.DS_Store", "**/Thumbs.db"
+        "**/.DS_Store", "**/Thumbs.db",
     }
 
     # You may like to use "replace" list to replace
@@ -66,7 +66,7 @@ if method == methods["copy"]:
                 if len(l) > 0 and not l.startswith("#"):
                     # see https://code.visualstudio.com/docs/editor/codebasics#_advanced-search-options 
                     if l.startswith("/"): # directory
-                        exclude.add("**" + l)
+                        exclude.add(l)
                     elif l.startswith("!"): # don't want to ignore
                         pass
                     elif replace.get(l) is not None:
@@ -75,6 +75,7 @@ if method == methods["copy"]:
                     elif all(b not in l for b in bypass):
                         # file or directory
                         exclude.add("**/" + l)
+                        
     json_dict.update({"files.exclude": {
         key: True for key in sorted(exclude)}})
 elif method == methods["follow"]:
