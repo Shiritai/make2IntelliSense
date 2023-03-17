@@ -36,8 +36,23 @@ if method == methods["copy"]:
         "**/.DS_Store", "**/Thumbs.db"
     }
 
+    # You may like to use "replace" list to replace
+    #   what you don't like into other things
+    # e.g. ".*" is a horrible ignorant 
+    #   since it ignores too many files, you may
+    #   want to use things like ".[!v]*" to make
+    #   .vscode directory always visible 
+    #   meanwhile ignoring other files start with
+    #   a dot and non-v character
+    replace = {
+        ".*": ".[!v]*"
+    }
+
+    # Use a bypass list not to exclude them.
+    # Notice that they still have chance disappear
+    #   since you may have ".*" ignored.
     bypass = {
-        '.vscode', '.vscode/**'
+        '.vscode'
     }
 
     # fetch more files to ignore from .gitignore
@@ -54,10 +69,11 @@ if method == methods["copy"]:
                         exclude.add("**" + l)
                     elif l.startswith("!"): # don't want to ignore
                         pass
-                    elif all(b not in l for b in bypass): # file or directory
-                        # use a bypass list not to exclude them
-                        # Notice that they still have chance disappear
-                        # since you may have ".*" ignored
+                    elif replace.get(l) is not None:
+                        # in replace list
+                        exclude.add(replace[l])
+                    elif all(b not in l for b in bypass):
+                        # file or directory
                         exclude.add("**/" + l)
     json_dict.update({"files.exclude": {
         key: True for key in sorted(exclude)}})
