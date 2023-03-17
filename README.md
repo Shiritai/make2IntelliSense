@@ -88,6 +88,6 @@ For example, if you're again setting linux developing environment, than you can 
 make TAR_DIR=~/repos/linux MODE= 
 ```
 
-### Fail of parsing after make
+### Fail to parse after make
 
 If you've run `make` inside target directory before running `make` of this repo's, you may sometimes got a wrong result since files are all made, so there will be no more making output to catch and parse. In this case, you can first `make clean` inside target directory, then run `make` in this repo again.
