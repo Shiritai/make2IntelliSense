@@ -9,3 +9,6 @@ run: $(SCRIPT)
 
 %.json:
 	-python3 $(addsuffix $*.py, $(PF)) $(TAR_DIR) $(MODE) $(OPT)
+
+clean:
+	-rm -rf $(TAR_DIR).vscode $(TAR_DIR)/.vscode
