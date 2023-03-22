@@ -33,7 +33,7 @@ std = {
 
 # ------------------------
 # compilation of regex
-std_match = re.compile(r"-std=([\w|+]{1,3}\d{2})")
+std_match = re.compile(r"-std=([\w|+]{1,5})(\d{2})")
 cc_match = re.compile(r'\s+CC\s+')
 cpp_match = re.compile(r'\s+CC\s+')
 # ------------------------
@@ -69,8 +69,8 @@ def process_command(line: str):
                 defines["declare"].add(content)
         elif i.startswith("-std="):
             # found c/c++ compile standard
-            lang_std, = std_match.search(i).groups()
-            std["c" if "++" not in lang_std else "cpp"].add(lang_std)
+            _lang, _std = std_match.search(i).groups()
+            std["c" if "++" not in _lang else "cpp"].add((_lang, _std))
 
 # working directory
 work_dir = "./" if len(sys.argv) < 2 else sys.argv[1]
@@ -98,7 +98,21 @@ for i in lines:
 # handle exception
 for k, v in std.items():
     if len(std[k]) > 1:
-        print(f"detect multiple {k} standards: {', '.join(v)}")
+        print(f"detect multiple {k} standards: {', '.join(f'{_l}{_s}' for _l, _s in v)}")
+
+def __std_code(_std):
+    s = int(_std[1])
+    return s if s >= 89 else s + 100
+
+std_c = 'c99'
+if len(std['c']) > 0:
+    std_c = min(std["c"], key=__std_code)
+    std_c = f'{std_c[0]}{std_c[1]}'
+
+std_cpp = 'c++11'
+if len(std['c++']) > 0:
+    std_cpp = min(std["c++"], key=__std_code)
+    std_cpp = f'{std_cpp[0]}{std_cpp[1]}'
 # -------------------
 
 # Create the JSON
@@ -110,8 +124,8 @@ configs = {
             if k not in defines["black_kv_pair"]))),
     "intelliSenseMode": "gcc-x64",
     "compilerPath": cc_path,
-    "cStandard": (std["c"].pop() if len(std["c"]) > 0 else 'c99'),
-    "cppStandard": (std["c++"].pop() if len(std["c++"]) > 0 else 'c++11'),
+    "cStandard": std_c,
+    "cppStandard": std_cpp,
 }
 
 json_dict.update({
