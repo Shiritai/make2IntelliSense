@@ -87,7 +87,7 @@ if os.path.isfile(tar_file):
 
 make_arg = "" if len(sys.argv) < 3 else sys.argv[2]
 # run make to find #defines and -I includes
-lines = cmd_stream(f'cd {work_dir} && make {make_arg}')
+lines = cmd_stream(f'CUR_DIR=`pwd` && cd {work_dir} && make {make_arg} >`echo $CUR_DIR`/my.log 2>&1 &')
 for i in lines:
     # look for a line with " CC "... this is a super ghetto method
     val = cc_match.search(i)
